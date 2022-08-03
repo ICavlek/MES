@@ -28,9 +28,36 @@ void test_get_data_from_database() {
 	}
 }
 
+void test_buy_limit() {
+	MarketOrderHandler market;
+	market.create_new_buy_limit(2, 1, 2, 0, 1);
+	market.update_orders(2.1, 2);
+	market.update_orders(1.1, 1.05);
+	market.update_orders(0.95, 0.94);
+	market.update_orders(0.1, -0.1);
+}
+
+void test_buy_stop() {
+	MarketOrderHandler market;
+	market.create_new_buy_stop(2, 3, 4, 1, 1);
+	market.update_orders(2.1, 2);
+	market.update_orders(3.1, 3.05);
+	market.update_orders(1.95, 1.94);
+	market.update_orders(0.1, -0.1);
+	market.create_new_sell_limit(0.1, 1, 0.5, 2, 1);
+	market.update_orders(0.5, 0.4);
+	market.update_orders(1.2, 1.1);
+	market.update_orders(0.4, 0.5);
+	market.create_new_sell_stop(0.5, 0.3, 0.2, 0.6, 1);
+	market.update_orders(0.35, 0.3);
+	market.update_orders(0.5, 0.4);
+	market.update_orders(0.7, 0.6);
+}
+
 void test_orders() {
 	try {
-		SellStop sell_stop(1, 0.5, 0.25, 2, 1, 1);
+		//test_buy_limit();
+		test_buy_stop();
 	}
 	catch (MOHBaseException& e) {
 		std::cout << e.what() << std::endl;
