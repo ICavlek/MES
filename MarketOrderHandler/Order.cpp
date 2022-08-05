@@ -32,22 +32,30 @@ public:
 		activate();
 	}
 
-	void handle_success(double price, std::ofstream& trade_report) {
+	void handle_success(double price, double& account_balance, std::ofstream& trade_report) {
 		std::cout << "SUCCES " + order_type + " order " + std::to_string(ticket_number) + 
 			" has hit T/P due to price " + std::to_string(price) << std::endl;
 		std::cout << std::endl;
+		double profit = std::abs(price - take_profit);
+		double swap = 0;
+		account_balance += profit * volume * 100000;
 		trade_report << date_time + "," + order_type + "," + "SUCCESS" + "," +
 			std::to_string(order_price) + "," + std::to_string(stop_loss) +
-			"," + std::to_string(volume) + "," + "profit,swap,balance" << std::endl;
+			"," + std::to_string(volume) + "," + std::to_string(profit) + "," + 
+			"," + std::to_string(swap) + "," + std::to_string(account_balance) << std::endl;
 	}
 
-	void handle_fail(double price, std::ofstream& trade_report) {
+	void handle_fail(double price, double& account_balance, std::ofstream& trade_report) {
 		std::cout << "FAIL " + order_type + " order " + std::to_string(ticket_number) + 
 			" has hit S/L due to price " + std::to_string(price) << std::endl;
 		std::cout << std::endl;
+		double profit = std::abs(price - take_profit);
+		double swap = 0;
+		account_balance -= profit * volume * 100000;
 		trade_report << date_time + "," + order_type + "," + "FAIL" + "," +
 			std::to_string(order_price) + "," + std::to_string(stop_loss) +
-			"," + std::to_string(volume) + "," + "profit,swap,balance" << std::endl;
+			"," + std::to_string(volume) + "," + std::to_string(profit) + "," +
+			"," + std::to_string(swap) + "," + std::to_string(account_balance) << std::endl;
 	}
 
 	bool is_active() {
@@ -95,14 +103,14 @@ public:
 		}
 	}
 
-	bool close_condition(double price_bid, std::ofstream& trade_report) {
+	bool close_condition(double price_bid, double& account_balance, std::ofstream& trade_report) {
 		if (is_active()) {
 			if (price_bid >= get_take_profit()) {
-				handle_success(price_bid, trade_report);
+				handle_success(price_bid, account_balance, trade_report);
 				return true;
 			}
 			else if (price_bid <= get_stop_loss()) {
-				handle_fail(price_bid, trade_report);
+				handle_fail(price_bid, account_balance,  trade_report);
 				return true;
 			}
 		}
@@ -120,14 +128,14 @@ public:
 		}
 	}
 
-	bool close_condition(double price_ask, std::ofstream& trade_report) {
+	bool close_condition(double price_ask, double& account_balance, std::ofstream& trade_report) {
 		if (is_active()) {
 			if (price_ask <= get_take_profit()) {
-				handle_success(price_ask, trade_report);
+				handle_success(price_ask, account_balance, trade_report);
 				return true;
 			}
 			else if (price_ask >= get_stop_loss()) {
-				handle_fail(price_ask, trade_report);
+				handle_fail(price_ask, account_balance, trade_report);
 				return true;
 			}
 		}
@@ -240,12 +248,28 @@ public:
 		++next_ticket_number;
 	}
 
-	void update_orders(double price_ask, double price_bid, std::ofstream& trade_report) {
+	void update_orders(double price_ask, double price_bid, double& account_balance, std::ofstream& trade_report) {
 		std::cout << "Handling Price Ask " + std::to_string(price_ask) + " and Price Bid " + std::to_string(price_bid) + "..." << std::endl;
-		update_buy_orders(buy_limit_orders, price_ask, price_bid, trade_report);
-		update_buy_orders(buy_stop_orders, price_ask, price_bid, trade_report);
-		update_sell_orders(sell_limit_orders, price_ask, price_bid, trade_report);
-		update_sell_orders(sell_stop_orders, price_ask, price_bid, trade_report);
+		update_buy_orders(buy_limit_orders, price_ask, price_bid, account_balance, trade_report);
+		update_buy_orders(buy_stop_orders, price_ask, price_bid, account_balance, trade_report);
+		update_sell_orders(sell_limit_orders, price_ask, price_bid, account_balance, trade_report);
+		update_sell_orders(sell_stop_orders, price_ask, price_bid, account_balance, trade_report);
+	}
+
+	void delete_all_buy_limit_orders() {
+		buy_limit_orders.clear();
+	}
+
+	void delete_all_buy_stop_orders() {
+		buy_stop_orders.clear();
+	}
+
+	void delete_all_sell_limit_orders() {
+		sell_limit_orders.clear();
+	}
+
+	void delete_all_sell_stop_orders() {
+		sell_stop_orders.clear();
 	}
 
 private:
@@ -256,12 +280,12 @@ private:
 	int next_ticket_number;
 
 	template<typename OrderType>
-	void update_buy_orders(OrderType& buy_orders, double price_ask, double price_bid, std::ofstream& trade_report) {
+	void update_buy_orders(OrderType& buy_orders, double price_ask, double price_bid, double& account_balance, std::ofstream& trade_report) {
 		std::vector<int> indices_to_delete;
 		for (size_t i = 0; i < buy_orders.size(); i++) {
 			auto& order = buy_orders[i];
 			order.init_condition(price_ask);
-			bool is_closed = order.close_condition(price_bid, trade_report);
+			bool is_closed = order.close_condition(price_bid, account_balance, trade_report);
 			if (is_closed) {
 				indices_to_delete.push_back(i);
 			}
@@ -270,12 +294,12 @@ private:
 	}
 
 	template<typename OrderType>
-	void update_sell_orders(OrderType& sell_orders, double price_ask, double price_bid, std::ofstream& trade_report) {
+	void update_sell_orders(OrderType& sell_orders, double price_ask, double price_bid, double& account_balance, std::ofstream& trade_report) {
 		std::vector<int> indices_to_delete;
 		for (size_t i = 0; i < sell_orders.size(); i++) {
 			auto& order = sell_orders[i];
 			order.init_condition(price_bid);
-			bool is_closed = order.close_condition(price_ask, trade_report);
+			bool is_closed = order.close_condition(price_ask, account_balance, trade_report);
 			if (is_closed) {
 				indices_to_delete.push_back(i);
 			}
@@ -285,8 +309,10 @@ private:
 
 	template<typename OrderType>
 	void delete_element(std::vector<OrderType>& vector_order, std::vector<int> indices) {
-		for (auto index : indices) {
-			vector_order.erase(vector_order.begin() + index);
+		if (indices.size()) {
+			for (int index = indices.size(); index == 0; index--) {
+				vector_order.erase(vector_order.begin() + index);
+			}
 		}
 	}
 };
