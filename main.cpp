@@ -9,7 +9,7 @@
 #include "ExpertAdvisor/ExpertAdvisor.mqh"
 
 std::vector<PriceData> get_ask_data_from_database(std::string start_date, std::string start_time, std::string end_date, std::string end_time) {
-	std::string path = "D:\\Ivan\\Trading\\Historical_Data\\GBPUSD\\GBPUSD_1_M_ASK_2022_Reduced.csv";
+	std::string path = "D:\\Ivan\\Trading\\Historical_Data\\GBPUSD\\GBPUSD_1_M_ASK_2022.csv";
 	std::cout << "Loading ASK data..." << std::endl;
 	DataBaseFileHandler data_base(
 		path, start_date, start_time, end_date, end_time
@@ -18,7 +18,7 @@ std::vector<PriceData> get_ask_data_from_database(std::string start_date, std::s
 }
 
 std::vector<PriceData> get_bid_data_from_database(std::string start_date, std::string start_time, std::string end_date, std::string end_time) {
-	std::string path = "D:\\Ivan\\Trading\\Historical_Data\\GBPUSD\\GBPUSD_1_M_BID_2022_Reduced.csv";
+	std::string path = "D:\\Ivan\\Trading\\Historical_Data\\GBPUSD\\GBPUSD_1_M_BID_2022.csv";
 	std::cout << "Loading BID data..." << std::endl;
 	DataBaseFileHandler data_base(
 		path, start_date, start_time, end_date, end_time
@@ -27,9 +27,9 @@ std::vector<PriceData> get_bid_data_from_database(std::string start_date, std::s
 }
 
 void forex_market() {
-	std::string start_date = "28.07.2022";
+	std::string start_date = "26.01.2022";
 	std::string start_time = "00:00:00.000";
-	std::string end_date = "28.07.2022";
+	std::string end_date = "31.07.2022";
 	std::string end_time = "23:59:00.000";
 
 	auto ask_data_vector = get_ask_data_from_database(start_date, start_time, end_date, end_time);

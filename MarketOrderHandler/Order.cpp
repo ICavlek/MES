@@ -36,20 +36,20 @@ public:
 		std::cout << "SUCCES " + order_type + " order " + std::to_string(ticket_number) + 
 			" has hit T/P due to price " + std::to_string(price) << std::endl;
 		std::cout << std::endl;
-		double profit = std::abs(price - take_profit);
+		double profit = std::abs(order_price - take_profit);
 		double swap = 0;
 		account_balance += profit * volume * 100000;
 		trade_report << date_time + "," + order_type + "," + "SUCCESS" + "," +
 			std::to_string(order_price) + "," + std::to_string(stop_loss) +
 			"," + std::to_string(volume) + "," + std::to_string(profit) + "," + 
-			"," + std::to_string(swap) + "," + std::to_string(account_balance) << std::endl;
+			std::to_string(swap) + "," + std::to_string(account_balance) << std::endl;
 	}
 
 	void handle_fail(double price, double& account_balance, std::ofstream& trade_report) {
 		std::cout << "FAIL " + order_type + " order " + std::to_string(ticket_number) + 
 			" has hit S/L due to price " + std::to_string(price) << std::endl;
 		std::cout << std::endl;
-		double profit = std::abs(price - take_profit);
+		double profit = std::abs(order_price - take_profit);
 		double swap = 0;
 		account_balance -= profit * volume * 100000;
 		trade_report << date_time + "," + order_type + "," + "FAIL" + "," +
@@ -310,8 +310,8 @@ private:
 	template<typename OrderType>
 	void delete_element(std::vector<OrderType>& vector_order, std::vector<int> indices) {
 		if (indices.size()) {
-			for (int index = indices.size(); index == 0; index--) {
-				vector_order.erase(vector_order.begin() + index);
+			for (int i = indices.size() - 1; i >= 0; i--) {
+				vector_order.erase(vector_order.begin() + indices[i]);
 			}
 		}
 	}
