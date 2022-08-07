@@ -20,6 +20,11 @@ public:
 		std::cout << "----------Order Created----------" << std::endl;
 	}
 
+	void order_info() {
+		std::cout << order_type + " " + date_time + " Open Price: " + std::to_string(order_price) +
+			" T/P: " + std::to_string(take_profit) + " S/L: " + std::to_string(stop_loss) << std::endl;
+	}
+
 	void order_successfully_created(int ticket_number) {
 		std::cout << order_type + " " + std::to_string(ticket_number) + " has been successfully created" << std::endl;
 		std::cout << std::endl;
@@ -283,6 +288,7 @@ private:
 	void update_buy_orders(OrderType& buy_orders, double price_ask, double price_bid, double& account_balance, std::ofstream& trade_report) {
 		std::vector<int> indices_to_delete;
 		for (size_t i = 0; i < buy_orders.size(); i++) {
+			buy_orders[i].order_info();
 			auto& order = buy_orders[i];
 			order.init_condition(price_ask);
 			bool is_closed = order.close_condition(price_bid, account_balance, trade_report);
@@ -297,6 +303,7 @@ private:
 	void update_sell_orders(OrderType& sell_orders, double price_ask, double price_bid, double& account_balance, std::ofstream& trade_report) {
 		std::vector<int> indices_to_delete;
 		for (size_t i = 0; i < sell_orders.size(); i++) {
+			sell_orders[i].order_info();
 			auto& order = sell_orders[i];
 			order.init_condition(price_bid);
 			bool is_closed = order.close_condition(price_ask, account_balance, trade_report);
