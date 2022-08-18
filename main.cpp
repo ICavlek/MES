@@ -1,6 +1,9 @@
+//#include "expert_advisor.hpp"
 #include "forex_market.hpp"
 
+
 int main() {
+	//ExpertAdvisor expert_advisor = get_expert_advisor();
 	std::string currency_pair = "GBPUSD";
 	std::string start_date = "28.01.2022";
 	std::string start_time = "00:00:00.000";

@@ -22,14 +22,13 @@ std::vector<PriceData> get_bid_data_from_database(std::string currency_pair, std
 	return data_base.get_data_vector();
 }
 
-ExpertAdvisor get_expert_advisor(std::vector<PriceData> ask_data_vector) {
+ExpertAdvisor get_expert_advisor() {
 	STATES current_state = NONE_NONE;
 	double discrete_level = 0.002;
 	double init_balance = 2000;
 	int percentage_of_balance_to_use = 1;
 	bool use_max_balance = false;
-	double current_price_ask = ask_data_vector[0].price;
-	ExpertAdvisor expert_advisor(current_state, discrete_level, init_balance, percentage_of_balance_to_use, use_max_balance, current_price_ask);
+	ExpertAdvisor expert_advisor(current_state, discrete_level, init_balance, percentage_of_balance_to_use, use_max_balance);
 
 	return expert_advisor;
 }
@@ -50,6 +49,7 @@ void forex_market(std::string currency_pair, std::string start_date, std::string
 	auto ask_data_vector = get_ask_data_from_database(currency_pair, start_date, start_time, end_date, end_time);
 	auto bid_data_vector = get_bid_data_from_database(currency_pair, start_date, start_time, end_date, end_time);
 
-	ExpertAdvisor expert_advisor = get_expert_advisor(ask_data_vector);
+	ExpertAdvisor expert_advisor = get_expert_advisor();
+	expert_advisor.initialize(ask_data_vector[0].price);
 	simulate_expert_advisor(expert_advisor, ask_data_vector, bid_data_vector);
 }
