@@ -59,7 +59,7 @@ public:
 		account_balance -= profit * volume * 100000;
 		trade_report << date_time + "," + order_type + "," + "FAIL" + "," +
 			std::to_string(order_price) + "," + std::to_string(stop_loss) +
-			"," + std::to_string(volume) + "," + std::to_string(profit) + "," +
+			"," + std::to_string(volume) + "," + std::to_string(profit) + 
 			"," + std::to_string(swap) + "," + std::to_string(account_balance) << std::endl;
 	}
 

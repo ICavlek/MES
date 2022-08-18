@@ -8,13 +8,15 @@
 class DataBaseFileHandler {
 public:
 	DataBaseFileHandler(
-		std::string path, std::string start_date, std::string start_time, std::string end_date, std::string end_time
+		std::string currency_pair, std::string type, std::string start_date, std::string start_time, std::string end_date, std::string end_time
 	) :
-		path(path),
+		currency_pair(currency_pair),
+		type(type),
 		start_date(start_date),
 		start_time(start_time),
 		end_date(end_date),
 		end_time(end_time) {
+		path = "D:\\Ivan\\Trading\\Historical_Data\\" + currency_pair + "\\" + currency_pair + "_1_M_" + type + "_2022_Reduced.csv";
 		fill_data_vector();
 	}
 
@@ -23,11 +25,13 @@ public:
 	}
 
 private:
-	std::string path;
+	std::string currency_pair;
+	std::string type;
 	std::string start_date;
 	std::string start_time;
 	std::string end_date;
 	std::string end_time;
+	std::string path;
 	std::vector<PriceData> data_vector;
 
 	void fill_data_vector() {
