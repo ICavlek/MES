@@ -1,3 +1,4 @@
+#include "APIHandler.hpp"
 #include "ExpertAdvisor/ExpertAdvisor.mqh"
 
 ExpertAdvisor get_expert_advisor() {

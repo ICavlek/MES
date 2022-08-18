@@ -1,3 +1,7 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
 #include "MarketOrderHandler/MarketOrderHandler.hpp"
 
 class APIHandler {

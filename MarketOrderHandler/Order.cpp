@@ -1,3 +1,4 @@
+#include <fstream>
 #include "MarketOrderHandlerExceptions.hpp"
 
 class Order {
