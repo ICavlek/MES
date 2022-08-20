@@ -9,12 +9,11 @@ public:
     APIHandler(double init_balance) :
         market_order_handler(),
         balance(init_balance),
-        trade_report("D:\\Ivan\\Trading\\Historical_Data\\GBPUSD\\Trade_Report_GBPUSD.csv"),
         current_date_time(),
         current_price_ask(),
         current_price_bid() {}
 
-    void update_orders(std::string date_time, double price_ask, double price_bid) {
+    void update_orders(std::string date_time, double price_ask, double price_bid, std::ofstream& trade_report) {
         current_date_time = date_time;
         current_price_ask = price_ask;
         current_price_bid = price_bid;
@@ -75,7 +74,6 @@ public:
 private:
     MarketOrderHandler market_order_handler;
     double balance;
-    std::ofstream trade_report;
     std::string current_date_time;
     double current_price_ask;
     double current_price_bid;

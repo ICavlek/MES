@@ -6,12 +6,13 @@
 
 class ForexMarket {
 public:
-	ForexMarket(std::string currency_pair, std::string start_date, std::string start_time, std::string end_date, std::string end_time) :
+	ForexMarket(std::string currency_pair, std::string start_date, std::string start_time, std::string end_date, std::string end_time, std::string report_path) :
 		currency_pair(currency_pair),
 		start_date(start_date),
 		start_time(start_time),
 		end_date(end_date),
-		end_time(end_time) {
+		end_time(end_time),
+		trade_report(report_path) {
 		ask_data = get_data_from_database("ASK");
 		bid_data = get_data_from_database("BID");
 	}
@@ -27,6 +28,7 @@ private:
 	std::string start_time;
 	std::string end_date;
 	std::string end_time;
+	std::ofstream trade_report;
 	std::vector<PriceData> ask_data;
 	std::vector<PriceData> bid_data;
 
@@ -45,7 +47,7 @@ private:
 			double price_bid = bid_data[i].price;
 
 			std::cout << date_time + " ";
-			expert_advisor.api_handler.update_orders(date_time, price_ask, price_bid);
+			expert_advisor.api_handler.update_orders(date_time, price_ask, price_bid, trade_report);
 			expert_advisor.handle_state_machine(price_ask, price_bid);
 		}
 	}
